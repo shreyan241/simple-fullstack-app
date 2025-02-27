@@ -2,6 +2,18 @@
 
 A full-stack application for tracking and visualizing Amazon order shipments, providing customers with detailed insights into their order history and shipment statuses.
 
+## Live Demo
+
+Access the deployed application:
+
+- **Frontend**: [https://simple-fullstack-app-ten.vercel.app/](https://simple-fullstack-app-ten.vercel.app/)
+- **Backend API Documentation**: [https://order-tracker-app-3e6ffe777f50.herokuapp.com/api/docs](https://order-tracker-app-3e6ffe777f50.herokuapp.com/api/docs)
+
+## Demo
+Demo of the web application:
+
+![Amazon Order Tracker Demo](demo/vercel-demo.gif)
+
 ## Features
 
 - **Dashboard** - Visual overview of orders and shipments with key metrics
@@ -111,6 +123,8 @@ The application centers around these key entities:
    heroku run python manage.py loaddata data_dump.json
    ```
 
+The backend is deployed at: [https://order-tracker-app-3e6ffe777f50.herokuapp.com/api/](https://order-tracker-app-3e6ffe777f50.herokuapp.com/api/)
+
 ### Frontend (Vercel)
 
 1. Connect your GitHub repository to Vercel
@@ -118,6 +132,8 @@ The application centers around these key entities:
 3. Configure root directory as "frontend"
 4. Add environment variables in Vercel dashboard
 5. Deploy the application
+
+The frontend is deployed at: [https://simple-fullstack-app-ten.vercel.app/](https://simple-fullstack-app-ten.vercel.app/)
 
 ## API Overview
 
