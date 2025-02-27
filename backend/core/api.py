@@ -4,10 +4,36 @@ from datetime import date, datetime
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from django.http import Http404
+import logging
+import traceback
 from .models import Customer, Order, Shipment, ShipmentItem
 
-# Initialize the API
-api = NinjaAPI(title="Amazon Order Tracker API")
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Initialize the API with more explicit settings
+try:
+    api = NinjaAPI(
+        title="Amazon Order Tracker API",
+        version="1.0.0",
+        docs_url="/docs",
+        urls_namespace="order_tracker_core_api",
+    )
+    logger.info("API initialized successfully")
+except Exception as e:
+    logger.error(f"Error initializing API: {str(e)}\n{traceback.format_exc()}")
+    # Still create the API object to avoid import errors
+    api = NinjaAPI(title="Amazon Order Tracker API")
+
+# Add a root endpoint
+@api.get("/")
+def root_endpoint(request):
+    return {"message": "Django Ninja API root is working!"}
+
+# Add a simple test endpoint
+@api.get("/test")
+def test_endpoint(request):
+    return {"message": "Django Ninja API is working!"}
 
 # Schema definitions - kept simple to match our CSV data
 class CustomerSchema(Schema):
