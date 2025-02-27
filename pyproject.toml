@@ -9,4 +9,8 @@ dependencies = [
     "django>=5.1.6",
     "django-cors-headers>=4.7.0",
     "python-dotenv>=1.0.1",
+    "dj-database-url>=2.3.0",
+    "gunicorn>=23.0.0",
+    "psycopg2-binary>=2.9.10",
+    "whitenoise>=6.9.0",
 ]
