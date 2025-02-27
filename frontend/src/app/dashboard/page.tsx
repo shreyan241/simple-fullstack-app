@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { useOrder } from '@/contexts/OrderProvider';
@@ -14,7 +14,6 @@ import {
   CardContent,
   CircularProgress,
   Button,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -96,10 +95,8 @@ export default function Dashboard() {
     customer,
     orders,
     dashboardStats,
-    isLoadingCustomer,
     isLoadingOrders,
     isLoadingDashboard,
-    customerError,
     ordersError,
     dashboardError,
     refreshOrders,

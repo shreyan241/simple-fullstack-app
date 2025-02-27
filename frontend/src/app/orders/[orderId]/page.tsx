@@ -9,10 +9,6 @@ import {
   Typography,
   Paper,
   Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
   CircularProgress,
   Button,
   Alert,
@@ -26,22 +22,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Chip,
   Link,
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   Refresh as RefreshIcon,
-  LocalShipping as ShippingIcon,
-  Timeline as TimelineIcon,
   LocationOn as LocationIcon,
   Warning as WarningIcon,
   Logout as LogoutIcon,
 } from '@mui/icons-material';
 
 import { StatusBadge } from '@/components/StatusBadge';
-import { getOrderDetails, Order, Shipment } from '@/services';
+import { getOrderDetails, Order } from '@/services';
 
 export default function OrderDetails() {
   const { user, isLoading: isUserLoading } = useUser();

@@ -10,11 +10,7 @@ import {
   Box, 
   Grid, 
   Card, 
-  CardContent,
-  Paper,
-  useTheme,
   Avatar,
-  Divider
 } from "@mui/material";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -25,7 +21,6 @@ import DashboardPreview from "@/components/DashboardPreview";
 
 export default function Home() {
   const { user, isLoading } = useUser();
-  const theme = useTheme();
 
   const features = [
     {

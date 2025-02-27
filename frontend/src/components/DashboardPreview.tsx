@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   Avatar,
-  LinearProgress,
   Table,
   TableBody,
   TableCell,
@@ -50,6 +49,26 @@ import {
   Share as ShareIcon,
   InfoOutlined as InfoOutlinedIcon,
 } from '@mui/icons-material';
+
+// Define proper type for chip colors
+type ChipColorType = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+
+// Define interface for shipment object
+interface Shipment {
+  id: string;
+  trackingNumber: string;
+  orderDate: string;
+  orderId: string;
+  product: string;
+  quantity: number;
+  status: string;
+  statusColor: ChipColorType;
+  location: string;
+  lastUpdate: string;
+  estimatedDelivery: string;
+  fulfillmentType: string;
+  deliveryAttempt: string;
+}
 
 // Bar chart using pure CSS
 const RegionalBarChart = () => {
@@ -248,7 +267,7 @@ const DeliveryTimeline = () => {
 )};
 
 // Shipment data based on the provided CSV
-const shipments = [
+const shipments: Shipment[] = [
   {
     id: 'SHIP-342',
     trackingNumber: 'A4149627-2A6F-4',
@@ -768,7 +787,7 @@ const DashboardPreview: React.FC = () => {
                           <Chip
                             label={shipment.status}
                             size="small"
-                            color={shipment.statusColor as any}
+                            color={shipment.statusColor}
                             sx={{ 
                               height: 20, 
                               fontSize: '0.7rem', 
