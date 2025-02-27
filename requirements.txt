@@ -1,0 +1,10 @@
+django>=5.1.6
+django-ninja>=1.3.0
+django-cors-headers>=4.7.0
+python-dotenv>=1.0.1
+
+# Heroku-specific requirements
+gunicorn  # Production web server for Django
+dj-database-url  # Helps connect to Heroku Postgres
+psycopg2-binary  # PostgreSQL adapter
+whitenoise  # Static file serving 
