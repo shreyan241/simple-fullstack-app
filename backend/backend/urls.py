@@ -18,8 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from core.api import api
+from django.http import HttpResponse
+
+# Simple test view
+def test_view(request):
+    return HttpResponse("API test route is working!")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', api.urls),
+    path('apitest/', test_view),  # Test route
 ]
