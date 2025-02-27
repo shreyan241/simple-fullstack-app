@@ -22,18 +22,10 @@ import TimelineIcon from "@mui/icons-material/Timeline";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DashboardPreview from "@/components/DashboardPreview";
-import React from "react";
 
 export default function Home() {
   const { user, isLoading } = useUser();
   const theme = useTheme();
-  
-  // Log the full user object to see what data is available
-  React.useEffect(() => {
-    if (user) {
-      console.log('Auth0 User Object:', user);
-    }
-  }, [user]);
 
   const features = [
     {
@@ -376,7 +368,7 @@ export default function Home() {
                 borderRadius: 2
               }}
             >
-              {user ? "Access Your Dashboard" : "Start Free Trial"}
+              {user ? "Access Dashboard" : "Start Free Trial"}
             </Button>
             <Typography variant="body2" sx={{ mt: 2, opacity: 0.8 }}>
               No credit card required. 14-day free trial.

@@ -1,13 +1,15 @@
 from ninja import NinjaAPI, Schema
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import date, datetime
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
+from django.http import Http404
 from .models import Customer, Order, Shipment, ShipmentItem
 
 # Initialize the API
 api = NinjaAPI(title="Amazon Order Tracker API")
 
-# Schema definitions
+# Schema definitions - kept simple to match our CSV data
 class CustomerSchema(Schema):
     customer_id: str
     username: str
@@ -38,47 +40,89 @@ class ShipmentSchema(Schema):
 class OrderSchema(Schema):
     order_id: str
     order_date: date
-    customer_id: str
+    status: str
     shipments: List[ShipmentSchema]
 
 class OrderListSchema(Schema):
     order_id: str
     order_date: date
-    status: str  # Derived from shipment statuses
+    status: str
+    items: List[str]
+    items_count: int
+
+class DashboardStatsSchema(Schema):
+    total_orders: int
+    total_shipments: int
+    in_transit: int
+    delayed: int
+    delivered: int
+    failed: int
+    out_for_delivery: int
+    by_region: Dict[str, int]
+
+# Helper function to determine order status based on shipments
+def get_order_status(shipments):
+    if not shipments:
+        return "Processing"
+    
+    statuses = [s.current_status for s in shipments]
+    if "Failed" in statuses:
+        return "Failed"
+    elif "Delayed" in statuses:
+        return "Delayed"
+    elif "In Transit" in statuses:
+        return "In Transit"
+    elif "Out for Delivery" in statuses:
+        return "Out for Delivery"
+    elif all(s == "Delivered" for s in statuses):
+        return "Delivered"
+    return "Processing"
 
 # Endpoints
-@api.get("/customers/{customer_id}", response=CustomerSchema)
-def get_customer(request, customer_id: str):
-    return get_object_or_404(Customer, customer_id=customer_id)
+@api.get("/customers/lookup", response=CustomerSchema)
+def lookup_customer(request, username: str):
+    try:
+        customer = get_object_or_404(Customer, username=username)
+        return {
+            "customer_id": customer.customer_id,
+            "username": customer.username,
+            "email": customer.email
+        }
+    except Http404:
+        # For demo purposes, create a customer if not found
+        customer = Customer.objects.create(
+            username=username,
+            email=f"{username}@example.com"
+        )
+        return {
+            "customer_id": customer.customer_id,
+            "username": customer.username,
+            "email": customer.email
+        }
 
-@api.get("/customers/{customer_id}/orders", response=List[OrderListSchema])
-def list_customer_orders(request, customer_id: str):
-    customer = get_object_or_404(Customer, customer_id=customer_id)
+@api.get("/customers/{username}/orders", response=List[OrderListSchema])
+def list_customer_orders(request, username: str):
+    customer = get_object_or_404(Customer, username=username)
     orders = Order.objects.filter(customer=customer)
     
     result = []
     for order in orders:
-        # Get the latest shipment status for the order
+        # Get the shipments for this order
         shipments = Shipment.objects.filter(order=order)
-        status = "Unknown"
-        if shipments.exists():
-            # Use the "worst" status as the order status
-            statuses = [s.current_status for s in shipments]
-            if "Failed" in statuses:
-                status = "Failed"
-            elif "Delayed" in statuses:
-                status = "Delayed"
-            elif "In Transit" in statuses:
-                status = "In Transit"
-            elif "Out for Delivery" in statuses:
-                status = "Out for Delivery"
-            elif all(s == "Delivered" for s in statuses):
-                status = "Delivered"
+        status = get_order_status(shipments)
+        
+        # Get unique items
+        items_set = set()
+        for shipment in shipments:
+            for item in ShipmentItem.objects.filter(shipment=shipment):
+                items_set.add(item.item_name)
         
         result.append({
             "order_id": order.order_id,
             "order_date": order.order_date,
-            "status": status
+            "status": status,
+            "items": list(items_set),
+            "items_count": len(items_set)
         })
     
     return result
@@ -115,10 +159,12 @@ def get_order(request, order_id: str):
             "items": item_data
         })
     
+    status = get_order_status(shipments)
+    
     return {
         "order_id": order.order_id,
         "order_date": order.order_date,
-        "customer_id": order.customer.customer_id,
+        "status": status,
         "shipments": shipment_data
     }
 
@@ -147,4 +193,38 @@ def get_shipment(request, shipment_id: str):
         "delivery_attempt_status": shipment.delivery_attempt_status,
         "delivery_failure_status": shipment.delivery_failure_status,
         "items": item_data
+    }
+
+@api.get("/customers/{username}/dashboard", response=DashboardStatsSchema)
+def get_dashboard_stats(request, username: str):
+    customer = get_object_or_404(Customer, username=username)
+    
+    # Get all orders for the customer
+    orders = Order.objects.filter(customer=customer)
+    total_orders = orders.count()
+    
+    # Get all shipments from all customer orders
+    shipments = Shipment.objects.filter(order__customer=customer)
+    total_shipments = shipments.count()
+    
+    # Count shipments by status
+    in_transit = shipments.filter(current_status="In Transit").count()
+    delayed = shipments.filter(current_status="Delayed").count()
+    delivered = shipments.filter(current_status="Delivered").count()
+    failed = shipments.filter(current_status="Failed").count()
+    out_for_delivery = shipments.filter(current_status="Out for Delivery").count()
+    
+    # Count shipments by region
+    regions = shipments.values('fulfillment_region').annotate(count=Count('shipment_id'))
+    by_region = {region['fulfillment_region']: region['count'] for region in regions}
+    
+    return {
+        "total_orders": total_orders,
+        "total_shipments": total_shipments,
+        "in_transit": in_transit,
+        "delayed": delayed,
+        "delivered": delivered,
+        "failed": failed,
+        "out_for_delivery": out_for_delivery,
+        "by_region": by_region
     } 

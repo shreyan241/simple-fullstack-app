@@ -19,7 +19,8 @@ import {
   IconButton,
   Tooltip,
   Stack,
-  Badge
+  Badge,
+  useTheme
 } from '@mui/material';
 import {
   Timeline,
@@ -51,7 +52,10 @@ import {
 } from '@mui/icons-material';
 
 // Bar chart using pure CSS
-const RegionalBarChart = () => (
+const RegionalBarChart = () => {
+  const theme = useTheme();
+  
+  return (
   <Box sx={{ py: 1, px: 1, height: 135 }}>
     <Box sx={{ display: 'flex', alignItems: 'flex-end', height: 120, gap: '7px', position: 'relative' }}>
       <Box sx={{ position: 'absolute', left: 0, right: 0, height: '1px', bottom: '25%', borderBottom: '1px dashed rgba(0,0,0,0.1)' }} />
@@ -59,12 +63,12 @@ const RegionalBarChart = () => (
       <Box sx={{ position: 'absolute', left: 0, right: 0, height: '1px', bottom: '75%', borderBottom: '1px dashed rgba(0,0,0,0.1)' }} />
       
       {[
-        { region: 'Pacific', value: 65, color: '#1976d2' },
-        { region: 'Midwest', value: 45, color: '#1976d2' },
-        { region: 'Northeast', value: 30, color: '#1976d2' },
-        { region: 'Southeast', value: 55, color: '#1976d2' },
-        { region: 'West', value: 70, color: '#1976d2' },
-        { region: 'South', value: 40, color: '#1976d2' },
+        { region: 'Pacific', value: 65, color: theme.palette.primary.main },
+        { region: 'Midwest', value: 45, color: theme.palette.primary.main },
+        { region: 'Northeast', value: 30, color: theme.palette.primary.main },
+        { region: 'Southeast', value: 55, color: theme.palette.primary.main },
+        { region: 'West', value: 70, color: theme.palette.primary.main },
+        { region: 'South', value: 40, color: theme.palette.primary.main },
       ].map((item, i) => (
         <Tooltip key={i} title={`${item.region}: ${item.value} shipments`} arrow placement="top">
           <Box 
@@ -105,10 +109,12 @@ const RegionalBarChart = () => (
       <Typography>S</Typography>
     </Box>
   </Box>
-);
+)};
 
 // Status distribution chart
-const StatusChart = () => (
+const StatusChart = () => {
+  const theme = useTheme();
+  return (
   <Box sx={{ position: 'relative', height: 140, pt: 1, pb: 2 }}>
     <Box 
       sx={{ 
@@ -117,11 +123,11 @@ const StatusChart = () => (
         position: 'relative',
         mx: 'auto',
         backgroundImage: `conic-gradient(
-          #1976d2 0% 40%, 
-          #f44336 40% 55%, 
-          #ff9800 55% 75%, 
-          #4caf50 75% 95%,
-          #9e9e9e 95% 100%
+          ${theme.palette.info.main} 0% 40%, 
+          ${theme.palette.error.main} 40% 55%, 
+          ${theme.palette.warning.main} 55% 75%, 
+          ${theme.palette.success.main} 75% 95%,
+          ${theme.palette.grey[500]} 95% 100%
         )`,
         borderRadius: '50%',
         boxShadow: '0 4px 14px rgba(0,0,0,0.09)',
@@ -156,30 +162,32 @@ const StatusChart = () => (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1, mt: 2 }}>
       <Chip
         size="small"
-        sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#1976d2', color: 'white' }}
+        sx={{ height: 20, fontSize: '0.65rem', bgcolor: theme.palette.info.main, color: 'white' }}
         label="In Transit (40%)"
       />
       <Chip
         size="small"
-        sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#f44336', color: 'white' }}
+        sx={{ height: 20, fontSize: '0.65rem', bgcolor: theme.palette.error.main, color: 'white' }}
         label="Delayed (15%)"
       />
       <Chip
         size="small"
-        sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#ff9800', color: 'white' }}
+        sx={{ height: 20, fontSize: '0.65rem', bgcolor: theme.palette.warning.main, color: 'white' }}
         label="Out for Delivery (20%)"
       />
       <Chip
         size="small"
-        sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#4caf50', color: 'white' }}
+        sx={{ height: 20, fontSize: '0.65rem', bgcolor: theme.palette.success.main, color: 'white' }}
         label="Delivered (20%)"
       />
     </Box>
   </Box>
-);
+)};
 
 // Delivery timeline component
-const DeliveryTimeline = () => (
+const DeliveryTimeline = () => {
+  const theme = useTheme();
+  return (
   <Box sx={{ px: 1.5, pt: 0.5, pb: 1 }}>
     <Timeline position="alternate" sx={{ 
       p: 0, 
@@ -226,8 +234,8 @@ const DeliveryTimeline = () => (
       </TimelineItem>
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot sx={{ p: 0.5, bgcolor: '#e0e0e0' }}>
-            <CheckCircleIcon sx={{ fontSize: 12, color: '#9e9e9e' }} />
+          <TimelineDot sx={{ p: 0.5, bgcolor: theme.palette.grey[400] }}>
+            <CheckCircleIcon sx={{ fontSize: 12, color: theme.palette.grey[500] }} />
           </TimelineDot>
         </TimelineSeparator>
         <TimelineContent>
@@ -237,7 +245,7 @@ const DeliveryTimeline = () => (
       </TimelineItem>
     </Timeline>
   </Box>
-);
+)};
 
 // Shipment data based on the provided CSV
 const shipments = [
@@ -425,6 +433,8 @@ const shipments = [
 
 // Main component
 const DashboardPreview: React.FC = () => {
+  const theme = useTheme();
+  
   return (
     <Box 
       sx={{
@@ -858,8 +868,8 @@ const DashboardPreview: React.FC = () => {
                           height: 20, 
                           fontSize: '0.65rem',
                           fontWeight: 600,
-                          bgcolor: 'primary.light',
-                          color: 'primary.dark',
+                          bgcolor: theme.palette.primary.light,
+                          color: theme.palette.primary.contrastText,
                         }} 
                       />
                     </Box>
