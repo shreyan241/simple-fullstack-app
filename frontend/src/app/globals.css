@@ -3,20 +3,24 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
+/* We'll let Material UI handle dark mode instead of using these */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  height: 100%;
 }
 
 body {
+  min-height: 100%;
+  margin: 0;
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
@@ -35,8 +39,9 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
+/* We'll let Material UI handle dark mode */
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
+} */
