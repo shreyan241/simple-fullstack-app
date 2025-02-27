@@ -16,16 +16,22 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from core.api import api
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 # Simple test view
 def test_view(request):
     return HttpResponse("API test route is working!")
 
+# JSON test view
+def json_test_view(request):
+    return JsonResponse({"message": "JSON API is working!"})
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', api.urls),
+    path('api-alt/', lambda request: api.urls(request)),
     path('apitest/', test_view),  # Test route
+    path('json-api/', json_test_view),  # JSON test route
 ]
